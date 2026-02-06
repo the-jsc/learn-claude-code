@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 v1_basic_agent.py - Mini Claude Code: Model as Agent (~200 lines)
 v1_basic_agent.py - 迷你 Claude Code：Model as Agent（模型即代理，约 200 行）
@@ -120,16 +119,10 @@ TOOLS = [
         "description": "Run a shell command. Use for: ls, find, grep, git, npm, python, etc.",
         "input_schema": {
             "type": "object",
-            "properties": {
-                "command": {
-                    "type": "string",
-                    "description": "The shell command to execute"
-                }
-            },
+            "properties": {"command": {"type": "string", "description": "The shell command to execute"}},
             "required": ["command"],
         },
     },
-
     # Tool 2: Read File - For understanding existing code
     # 工具 2：Read File——用于理解现有代码
     # Returns file content with optional line limit for large files
@@ -140,19 +133,12 @@ TOOLS = [
         "input_schema": {
             "type": "object",
             "properties": {
-                "path": {
-                    "type": "string",
-                    "description": "Relative path to the file"
-                },
-                "limit": {
-                    "type": "integer",
-                    "description": "Max lines to read (default: all)"
-                },
+                "path": {"type": "string", "description": "Relative path to the file"},
+                "limit": {"type": "integer", "description": "Max lines to read (default: all)"},
             },
             "required": ["path"],
         },
     },
-
     # Tool 3: Write File - For creating new files or complete rewrites
     # 工具 3：Write File——用于创建新文件或整体重写
     # Creates parent directories automatically
@@ -163,19 +149,12 @@ TOOLS = [
         "input_schema": {
             "type": "object",
             "properties": {
-                "path": {
-                    "type": "string",
-                    "description": "Relative path for the file"
-                },
-                "content": {
-                    "type": "string",
-                    "description": "Content to write"
-                },
+                "path": {"type": "string", "description": "Relative path for the file"},
+                "content": {"type": "string", "description": "Content to write"},
             },
             "required": ["path", "content"],
         },
     },
-
     # Tool 4: Edit File - For surgical changes to existing code
     # 工具 4：Edit File——对现有代码做“手术式”的精确修改
     # Uses exact string matching for precise edits
@@ -186,18 +165,9 @@ TOOLS = [
         "input_schema": {
             "type": "object",
             "properties": {
-                "path": {
-                    "type": "string",
-                    "description": "Relative path to the file"
-                },
-                "old_text": {
-                    "type": "string",
-                    "description": "Exact text to find (must match precisely)"
-                },
-                "new_text": {
-                    "type": "string",
-                    "description": "Replacement text"
-                },
+                "path": {"type": "string", "description": "Relative path to the file"},
+                "old_text": {"type": "string", "description": "Exact text to find (must match precisely)"},
+                "new_text": {"type": "string", "description": "Replacement text"},
             },
             "required": ["path", "old_text", "new_text"],
         },
@@ -209,6 +179,7 @@ TOOLS = [
 # Tool Implementations
 # 工具实现
 # =============================================================================
+
 
 def safe_path(p: str) -> Path:
     """
@@ -244,14 +215,7 @@ def run_bash(command: str) -> str:
         return "Error: Dangerous command blocked"
 
     try:
-        result = subprocess.run(
-            command,
-            shell=True,
-            cwd=WORKDIR,
-            capture_output=True,
-            text=True,
-            timeout=60
-        )
+        result = subprocess.run(command, shell=True, cwd=WORKDIR, capture_output=True, text=True, timeout=60)
         output = (result.stdout + result.stderr).strip()
         return output[:50000] if output else "(no output)"
 
@@ -354,6 +318,7 @@ def execute_tool(name: str, args: dict) -> str:
 # Agent Loop（代理循环）——一切的核心
 # =============================================================================
 
+
 def agent_loop(messages: list) -> list:
     """
     The complete agent in one function.
@@ -424,11 +389,13 @@ def agent_loop(messages: list) -> list:
 
             # Collect result for the model
             # 收集结果并回传给模型
-            results.append({
-                "type": "tool_result",
-                "tool_use_id": tc.id,
-                "content": output,
-            })
+            results.append(
+                {
+                    "type": "tool_result",
+                    "tool_use_id": tc.id,
+                    "content": output,
+                }
+            )
 
         # Step 5: Append to conversation and continue
         # 步骤 5：追加到对话历史并继续
@@ -444,6 +411,7 @@ def agent_loop(messages: list) -> list:
 # Main REPL
 # 主 REPL（交互式入口）
 # =============================================================================
+
 
 def main():
     """

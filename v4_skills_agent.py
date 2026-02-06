@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 v4_skills_agent.py - Mini Claude Code: Skills Mechanism (~550 lines)
 v4_skills_agent.py - 迷你 Claude Code：Skills Mechanism（技能机制，约 550 行）
@@ -84,7 +83,7 @@ SKILL.md Standard:
     |   |-- references/       # Optional: docs, specs
     |-- code-review/
         |-- SKILL.md
-	        |-- scripts/          # Optional: helper scripts
+                |-- scripts/          # Optional: helper scripts
 （上面目录结构示例保持原样；要点是：用一套约定的文件结构承载技能知识与可选资源。）
 
 Cache-Preserving Injection:
@@ -134,6 +133,7 @@ MODEL = os.getenv("MODEL_ID", "claude-sonnet-4-5-20250929")
 # SkillLoader - The core addition in v4
 # SkillLoader——v4 的核心增量
 # =============================================================================
+
 
 class SkillLoader:
     """
@@ -258,10 +258,7 @@ class SkillLoader:
         if not self.skills:
             return "(no skills available)"
 
-        return "\n".join(
-            f"- {name}: {skill['description']}"
-            for name, skill in self.skills.items()
-        )
+        return "\n".join(f"- {name}: {skill['description']}" for name, skill in self.skills.items())
 
     def get_skill_content(self, name: str) -> str:
         """
@@ -284,11 +281,7 @@ class SkillLoader:
         # List available resources (Layer 3 hints)
         # 列出可用资源（Layer 3 提示）
         resources = []
-        for folder, label in [
-            ("scripts", "Scripts"),
-            ("references", "References"),
-            ("assets", "Assets")
-        ]:
+        for folder, label in [("scripts", "Scripts"), ("references", "References"), ("assets", "Assets")]:
             folder_path = skill["dir"] / folder
             if folder_path.exists():
                 files = list(folder_path.glob("*"))
@@ -341,16 +334,14 @@ def get_agent_descriptions() -> str:
     """Generate agent type descriptions for system prompt.
     为 system prompt 生成 agent_type 描述列表。
     """
-    return "\n".join(
-        f"- {name}: {cfg['description']}"
-        for name, cfg in AGENT_TYPES.items()
-    )
+    return "\n".join(f"- {name}: {cfg['description']}" for name, cfg in AGENT_TYPES.items())
 
 
 # =============================================================================
 # TodoManager (from v2)
 # TodoManager（继承自 v2）
 # =============================================================================
+
 
 class TodoManager:
     """Task list manager with constraints. See v2 for details.
@@ -376,11 +367,7 @@ class TodoManager:
             if status == "in_progress":
                 in_progress += 1
 
-            validated.append({
-                "content": content,
-                "status": status,
-                "activeForm": active
-            })
+            validated.append({"content": content, "status": status, "activeForm": active})
 
         if in_progress > 1:
             raise ValueError("Only one task can be in_progress")
@@ -393,8 +380,7 @@ class TodoManager:
             return "No todos."
         lines = []
         for t in self.items:
-            mark = "[x]" if t["status"] == "completed" else \
-                   "[>]" if t["status"] == "in_progress" else "[ ]"
+            mark = "[x]" if t["status"] == "completed" else "[>]" if t["status"] == "in_progress" else "[ ]"
             lines.append(f"{mark} {t['content']}")
         done = sum(1 for t in self.items if t["status"] == "completed")
         return "\n".join(lines) + f"\n({done}/{len(self.items)} done)"
@@ -446,10 +432,7 @@ BASE_TOOLS = [
         "description": "Read file contents.",
         "input_schema": {
             "type": "object",
-            "properties": {
-                "path": {"type": "string"},
-                "limit": {"type": "integer"}
-            },
+            "properties": {"path": {"type": "string"}, "limit": {"type": "integer"}},
             "required": ["path"],
         },
     },
@@ -458,10 +441,7 @@ BASE_TOOLS = [
         "description": "Write to file.",
         "input_schema": {
             "type": "object",
-            "properties": {
-                "path": {"type": "string"},
-                "content": {"type": "string"}
-            },
+            "properties": {"path": {"type": "string"}, "content": {"type": "string"}},
             "required": ["path", "content"],
         },
     },
@@ -490,10 +470,7 @@ BASE_TOOLS = [
                         "type": "object",
                         "properties": {
                             "content": {"type": "string"},
-                            "status": {
-                                "type": "string",
-                                "enum": ["pending", "in_progress", "completed"]
-                            },
+                            "status": {"type": "string", "enum": ["pending", "in_progress", "completed"]},
                             "activeForm": {"type": "string"},
                         },
                         "required": ["content", "status", "activeForm"],
@@ -513,18 +490,9 @@ TASK_TOOL = {
     "input_schema": {
         "type": "object",
         "properties": {
-            "description": {
-                "type": "string",
-                "description": "Short task description (3-5 words)"
-            },
-            "prompt": {
-                "type": "string",
-                "description": "Detailed instructions for the subagent"
-            },
-            "agent_type": {
-                "type": "string",
-                "enum": list(AGENT_TYPES.keys())
-            },
+            "description": {"type": "string", "description": "Short task description (3-5 words)"},
+            "prompt": {"type": "string", "description": "Detailed instructions for the subagent"},
+            "agent_type": {"type": "string", "enum": list(AGENT_TYPES.keys())},
         },
         "required": ["description", "prompt", "agent_type"],
     },
@@ -547,12 +515,7 @@ The skill content will be injected into the conversation, giving you
 detailed instructions and access to resources.""",
     "input_schema": {
         "type": "object",
-        "properties": {
-            "skill": {
-                "type": "string",
-                "description": "Name of the skill to load"
-            }
-        },
+        "properties": {"skill": {"type": "string", "description": "Name of the skill to load"}},
         "required": ["skill"],
     },
 }
@@ -575,6 +538,7 @@ def get_tools_for_agent(agent_type: str) -> list:
 # 工具实现
 # =============================================================================
 
+
 def safe_path(p: str) -> Path:
     """Ensure path stays within workspace.
     确保路径保持在工作区内。
@@ -592,10 +556,7 @@ def run_bash(cmd: str) -> str:
     if any(d in cmd for d in ["rm -rf /", "sudo", "shutdown"]):
         return "Error: Dangerous command"
     try:
-        r = subprocess.run(
-            cmd, shell=True, cwd=WORKDIR,
-            capture_output=True, text=True, timeout=60
-        )
+        r = subprocess.run(cmd, shell=True, cwd=WORKDIR, capture_output=True, text=True, timeout=60)
         return ((r.stdout + r.stderr).strip() or "(no output)")[:50000]
     except Exception as e:
         return f"Error: {e}"
@@ -732,25 +693,17 @@ Complete the task and return a clear, concise summary."""
         for tc in tool_calls:
             tool_count += 1
             output = execute_tool(tc.name, tc.input)
-            results.append({
-                "type": "tool_result",
-                "tool_use_id": tc.id,
-                "content": output
-            })
+            results.append({"type": "tool_result", "tool_use_id": tc.id, "content": output})
 
             elapsed = time.time() - start
-            sys.stdout.write(
-                f"\r  [{agent_type}] {description} ... {tool_count} tools, {elapsed:.1f}s"
-            )
+            sys.stdout.write(f"\r  [{agent_type}] {description} ... {tool_count} tools, {elapsed:.1f}s")
             sys.stdout.flush()
 
         sub_messages.append({"role": "assistant", "content": response.content})
         sub_messages.append({"role": "user", "content": results})
 
     elapsed = time.time() - start
-    sys.stdout.write(
-        f"\r  [{agent_type}] {description} - done ({tool_count} tools, {elapsed:.1f}s)\n"
-    )
+    sys.stdout.write(f"\r  [{agent_type}] {description} - done ({tool_count} tools, {elapsed:.1f}s)\n")
 
     for block in response.content:
         if hasattr(block, "text"):
@@ -784,6 +737,7 @@ def execute_tool(name: str, args: dict) -> str:
 # Main Agent Loop
 # 主 agent loop
 # =============================================================================
+
 
 def agent_loop(messages: list) -> list:
     """
@@ -835,11 +789,7 @@ def agent_loop(messages: list) -> list:
                 preview = output[:200] + "..." if len(output) > 200 else output
                 print(f"  {preview}")
 
-            results.append({
-                "type": "tool_result",
-                "tool_use_id": tc.id,
-                "content": output
-            })
+            results.append({"type": "tool_result", "tool_use_id": tc.id, "content": output})
 
         messages.append({"role": "assistant", "content": response.content})
         messages.append({"role": "user", "content": results})
@@ -849,6 +799,7 @@ def agent_loop(messages: list) -> list:
 # Main REPL
 # 主 REPL（交互式入口）
 # =============================================================================
+
 
 def main():
     print(f"Mini Claude Code v4 (with Skills) - {WORKDIR}")

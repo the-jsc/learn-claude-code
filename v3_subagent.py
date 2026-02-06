@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 v3_subagent.py - Mini Claude Code: Subagent Mechanism (~450 lines)
 v3_subagent.py - 迷你 Claude Code：Subagent Mechanism（子代理机制，约 450 行）
@@ -139,7 +138,6 @@ AGENT_TYPES = {
         # 无写入权限
         "prompt": "You are an exploration agent. Search and analyze, but never modify files. Return a concise summary.",
     },
-
     # Code: Full-powered agent for implementation
     # Code：全功能 agent，用于实现与修复
     # Has all tools - use for actual coding work
@@ -151,7 +149,6 @@ AGENT_TYPES = {
         # 全部工具
         "prompt": "You are a coding agent. Implement the requested changes efficiently.",
     },
-
     # Plan: Analysis agent for design work
     # Plan：分析/设计用 agent
     # Read-only, focused on producing plans and strategies
@@ -170,16 +167,14 @@ def get_agent_descriptions() -> str:
     """Generate agent type descriptions for the Task tool.
     为 Task 工具生成 agent_type 描述列表。
     """
-    return "\n".join(
-        f"- {name}: {cfg['description']}"
-        for name, cfg in AGENT_TYPES.items()
-    )
+    return "\n".join(f"- {name}: {cfg['description']}" for name, cfg in AGENT_TYPES.items())
 
 
 # =============================================================================
 # TodoManager (from v2, unchanged)
 # TodoManager（继承自 v2，保持不变）
 # =============================================================================
+
 
 class TodoManager:
     """Task list manager with constraints. See v2 for details.
@@ -205,11 +200,7 @@ class TodoManager:
             if status == "in_progress":
                 in_progress += 1
 
-            validated.append({
-                "content": content,
-                "status": status,
-                "activeForm": active
-            })
+            validated.append({"content": content, "status": status, "activeForm": active})
 
         if in_progress > 1:
             raise ValueError("Only one task can be in_progress")
@@ -222,8 +213,7 @@ class TodoManager:
             return "No todos."
         lines = []
         for t in self.items:
-            mark = "[x]" if t["status"] == "completed" else \
-                   "[>]" if t["status"] == "in_progress" else "[ ]"
+            mark = "[x]" if t["status"] == "completed" else "[>]" if t["status"] == "in_progress" else "[ ]"
             lines.append(f"{mark} {t['content']}")
         done = sum(1 for t in self.items if t["status"] == "completed")
         return "\n".join(lines) + f"\n({done}/{len(self.items)} done)"
@@ -271,10 +261,7 @@ BASE_TOOLS = [
         "description": "Read file contents.",
         "input_schema": {
             "type": "object",
-            "properties": {
-                "path": {"type": "string"},
-                "limit": {"type": "integer"}
-            },
+            "properties": {"path": {"type": "string"}, "limit": {"type": "integer"}},
             "required": ["path"],
         },
     },
@@ -283,10 +270,7 @@ BASE_TOOLS = [
         "description": "Write to file.",
         "input_schema": {
             "type": "object",
-            "properties": {
-                "path": {"type": "string"},
-                "content": {"type": "string"}
-            },
+            "properties": {"path": {"type": "string"}, "content": {"type": "string"}},
             "required": ["path", "content"],
         },
     },
@@ -315,10 +299,7 @@ BASE_TOOLS = [
                         "type": "object",
                         "properties": {
                             "content": {"type": "string"},
-                            "status": {
-                                "type": "string",
-                                "enum": ["pending", "in_progress", "completed"]
-                            },
+                            "status": {"type": "string", "enum": ["pending", "in_progress", "completed"]},
                             "activeForm": {"type": "string"},
                         },
                         "required": ["content", "status", "activeForm"],
@@ -354,19 +335,9 @@ Example uses:
     "input_schema": {
         "type": "object",
         "properties": {
-            "description": {
-                "type": "string",
-                "description": "Short task name (3-5 words) for progress display"
-            },
-            "prompt": {
-                "type": "string",
-                "description": "Detailed instructions for the subagent"
-            },
-            "agent_type": {
-                "type": "string",
-                "enum": list(AGENT_TYPES.keys()),
-                "description": "Type of agent to spawn"
-            },
+            "description": {"type": "string", "description": "Short task name (3-5 words) for progress display"},
+            "prompt": {"type": "string", "description": "Detailed instructions for the subagent"},
+            "agent_type": {"type": "string", "enum": list(AGENT_TYPES.keys()), "description": "Type of agent to spawn"},
         },
         "required": ["description", "prompt", "agent_type"],
     },
@@ -401,6 +372,7 @@ def get_tools_for_agent(agent_type: str) -> list:
 # 工具实现
 # =============================================================================
 
+
 def safe_path(p: str) -> Path:
     """Ensure path stays within workspace.
     确保路径保持在工作区内。
@@ -418,10 +390,7 @@ def run_bash(cmd: str) -> str:
     if any(d in cmd for d in ["rm -rf /", "sudo", "shutdown"]):
         return "Error: Dangerous command"
     try:
-        r = subprocess.run(
-            cmd, shell=True, cwd=WORKDIR,
-            capture_output=True, text=True, timeout=60
-        )
+        r = subprocess.run(cmd, shell=True, cwd=WORKDIR, capture_output=True, text=True, timeout=60)
         return ((r.stdout + r.stderr).strip() or "(no output)")[:50000]
     except Exception as e:
         return f"Error: {e}"
@@ -482,6 +451,7 @@ def run_todo(items: list) -> str:
 # Subagent Execution - The heart of v3
 # Subagent 执行——v3 的核心
 # =============================================================================
+
 
 def run_task(description: str, prompt: str, agent_type: str) -> str:
     """
@@ -563,18 +533,12 @@ Complete the task and return a clear, concise summary."""
         for tc in tool_calls:
             tool_count += 1
             output = execute_tool(tc.name, tc.input)
-            results.append({
-                "type": "tool_result",
-                "tool_use_id": tc.id,
-                "content": output
-            })
+            results.append({"type": "tool_result", "tool_use_id": tc.id, "content": output})
 
             # Update progress line (in-place)
             # 原地更新进度行
             elapsed = time.time() - start
-            sys.stdout.write(
-                f"\r  [{agent_type}] {description} ... {tool_count} tools, {elapsed:.1f}s"
-            )
+            sys.stdout.write(f"\r  [{agent_type}] {description} ... {tool_count} tools, {elapsed:.1f}s")
             sys.stdout.flush()
 
         sub_messages.append({"role": "assistant", "content": response.content})
@@ -583,9 +547,7 @@ Complete the task and return a clear, concise summary."""
     # Final progress update
     # 最终进度更新
     elapsed = time.time() - start
-    sys.stdout.write(
-        f"\r  [{agent_type}] {description} - done ({tool_count} tools, {elapsed:.1f}s)\n"
-    )
+    sys.stdout.write(f"\r  [{agent_type}] {description} - done ({tool_count} tools, {elapsed:.1f}s)\n")
 
     # Extract and return only the final text
     # 只提取并返回最终文本
@@ -621,6 +583,7 @@ def execute_tool(name: str, args: dict) -> str:
 # Main Agent Loop
 # 主 agent loop
 # =============================================================================
+
 
 def agent_loop(messages: list) -> list:
     """
@@ -668,11 +631,7 @@ def agent_loop(messages: list) -> list:
                 preview = output[:200] + "..." if len(output) > 200 else output
                 print(f"  {preview}")
 
-            results.append({
-                "type": "tool_result",
-                "tool_use_id": tc.id,
-                "content": output
-            })
+            results.append({"type": "tool_result", "tool_use_id": tc.id, "content": output})
 
         messages.append({"role": "assistant", "content": response.content})
         messages.append({"role": "user", "content": results})
@@ -682,6 +641,7 @@ def agent_loop(messages: list) -> list:
 # Main REPL
 # 主 REPL（交互式入口）
 # =============================================================================
+
 
 def main():
     print(f"Mini Claude Code v3 (with Subagents) - {WORKDIR}")

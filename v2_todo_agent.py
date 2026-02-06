@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 v2_todo_agent.py - Mini Claude Code: Structured Planning (~300 lines)
 v2_todo_agent.py - 迷你 Claude Code：Structured Planning（结构化规划，约 300 行）
@@ -115,6 +114,7 @@ MODEL = os.getenv("MODEL_ID", "claude-sonnet-4-5-20250929")
 # TodoManager——v2 的核心增量
 # =============================================================================
 
+
 class TodoManager:
     """
     Manages a structured task list with enforced constraints.
@@ -192,11 +192,7 @@ class TodoManager:
             if status == "in_progress":
                 in_progress_count += 1
 
-            validated.append({
-                "content": content,
-                "status": status,
-                "activeForm": active_form
-            })
+            validated.append({"content": content, "status": status, "activeForm": active_form})
 
         # Enforce constraints
         # 强制约束
@@ -305,10 +301,7 @@ TOOLS = [
         "description": "Read file contents.",
         "input_schema": {
             "type": "object",
-            "properties": {
-                "path": {"type": "string"},
-                "limit": {"type": "integer"}
-            },
+            "properties": {"path": {"type": "string"}, "limit": {"type": "integer"}},
             "required": ["path"],
         },
     },
@@ -317,10 +310,7 @@ TOOLS = [
         "description": "Write content to file.",
         "input_schema": {
             "type": "object",
-            "properties": {
-                "path": {"type": "string"},
-                "content": {"type": "string"}
-            },
+            "properties": {"path": {"type": "string"}, "content": {"type": "string"}},
             "required": ["path", "content"],
         },
     },
@@ -337,7 +327,6 @@ TOOLS = [
             "required": ["path", "old_text", "new_text"],
         },
     },
-
     # NEW in v2: TodoWrite
     # v2 新增：TodoWrite
     # This is the key addition that enables structured planning
@@ -354,18 +343,15 @@ TOOLS = [
                     "items": {
                         "type": "object",
                         "properties": {
-                            "content": {
-                                "type": "string",
-                                "description": "Task description"
-                            },
+                            "content": {"type": "string", "description": "Task description"},
                             "status": {
                                 "type": "string",
                                 "enum": ["pending", "in_progress", "completed"],
-                                "description": "Task status"
+                                "description": "Task status",
                             },
                             "activeForm": {
                                 "type": "string",
-                                "description": "Present tense action, e.g. 'Reading files'"
+                                "description": "Present tense action, e.g. 'Reading files'",
                             },
                         },
                         "required": ["content", "status", "activeForm"],
@@ -382,6 +368,7 @@ TOOLS = [
 # Tool Implementations (v1 + TodoWrite)
 # 工具实现（v1 + TodoWrite）
 # =============================================================================
+
 
 def safe_path(p: str) -> Path:
     """Ensure path stays within workspace.
@@ -401,10 +388,7 @@ def run_bash(cmd: str) -> str:
     if any(d in cmd for d in dangerous):
         return "Error: Dangerous command blocked"
     try:
-        result = subprocess.run(
-            cmd, shell=True, cwd=WORKDIR,
-            capture_output=True, text=True, timeout=60
-        )
+        result = subprocess.run(cmd, shell=True, cwd=WORKDIR, capture_output=True, text=True, timeout=60)
         output = (result.stdout + result.stderr).strip()
         return output[:50000] if output else "(no output)"
     except subprocess.TimeoutExpired:
@@ -539,11 +523,13 @@ def agent_loop(messages: list) -> list:
             preview = output[:300] + "..." if len(output) > 300 else output
             print(f"  {preview}")
 
-            results.append({
-                "type": "tool_result",
-                "tool_use_id": tc.id,
-                "content": output,
-            })
+            results.append(
+                {
+                    "type": "tool_result",
+                    "tool_use_id": tc.id,
+                    "content": output,
+                }
+            )
 
             # Track todo usage
             # 追踪是否使用了 TodoWrite
@@ -573,6 +559,7 @@ def agent_loop(messages: list) -> list:
 # Main REPL
 # 主 REPL（交互式入口）
 # =============================================================================
+
 
 def main():
     """
