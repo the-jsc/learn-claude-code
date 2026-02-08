@@ -60,7 +60,7 @@ load_dotenv()
 
 client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"), base_url=os.getenv("ANTHROPIC_BASE_URL"))
 model = os.getenv("MODEL")
-max_tokens = int(os.getenv("MAX_TOKENS", 4096))
+max_tokens = int(os.getenv("MAX_TOKENS"))
 
 # The ONE tool that does everything
 # Notice how the description teaches the model common patterns AND how to spawn subagents
@@ -126,7 +126,7 @@ def chat(prompt, history=None):
         # 2. Build assistant message content
         content = []
         for block in response.content:
-            if hasattr(block, "text"):
+            if block.type == "text":
                 content.append({"type": "text", "text": block.text})
             elif block.type == "tool_use":
                 content.append({"type": "tool_use", "id": block.id, "name": block.name, "input": block.input})
@@ -134,7 +134,7 @@ def chat(prompt, history=None):
 
         # 3. If model didn't call tools, we're done
         if response.stop_reason != "tool_use":
-            return "".join(block.text for block in response.content if hasattr(block, "text"))
+            return "".join(block.text for block in response.content if block.type == "text")
 
         # 4. Execute each tool call and collect results
         results = []
@@ -172,9 +172,9 @@ if __name__ == "__main__":
         history = []
         while True:
             try:
-                query = input("\033[36m>> \033[0m")  # Cyan color for prompt
+                user_prompt = input("\033[36m>> \033[0m")  # Cyan color for prompt
             except (EOFError, KeyboardInterrupt):
                 break
-            if query in ("quit", "exit"):
+            if user_prompt in ("quit", "exit"):
                 break
-            print(chat(query, history))
+            print(chat(user_prompt, history))
