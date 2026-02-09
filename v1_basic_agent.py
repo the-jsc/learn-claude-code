@@ -152,7 +152,7 @@ def run_bash(command: str) -> str:
     - 超时：60 秒，避免卡死
     - 输出：截断到 50KB，避免上下文溢出
     """
-    dangerous = ["rm -rf /", "sudo", "shutdown", "reboot", "> /dev/"]
+    dangerous = ["rm -rf", "sudo", "shutdown", "reboot", "> /dev/"]
     if any(d in command for d in dangerous):
         return "Error: Dangerous command blocked"
 
