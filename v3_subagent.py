@@ -179,9 +179,12 @@ todo = TodoManager()
 # System Prompt
 # =============================================================================
 system = f"""You are a coding agent at {WORKDIR}.
+
 Loop: plan -> act with tools -> report.
+
 You can spawn subagents for complex subtasks:
 {get_agent_descriptions()}
+
 Rules:
 - Use Task tool for subtasks that need focused exploration or implementation
 - Use TodoWrite to track multi-step work
