@@ -1,7 +1,4 @@
 # Learn Claude Code -- 从 0 到 1 构建 nano Claude Code-like agent
-
-[English](./README.md) | [中文](./README-zh.md) | [日本語](./README-ja.md)
-
 ```
                     THE AGENT PATTERN
                     =================
@@ -164,20 +161,20 @@ learn-claude-code/
 心智模型优先: 问题、方案、ASCII 图、最小化代码。
 [English](./docs/en/) | [中文](./docs/zh/) | [日本語](./docs/ja/)
 
-| 课程 | 主题 | 格言 |
-|------|------|------|
-| [s01](./docs/zh/s01-the-agent-loop.md) | Agent 循环 | *One loop & Bash is all you need* |
-| [s02](./docs/zh/s02-tool-use.md) | Tool Use | *加一个工具, 只加一个 handler* |
-| [s03](./docs/zh/s03-todo-write.md) | TodoWrite | *没有计划的 agent 走哪算哪* |
-| [s04](./docs/zh/s04-subagent.md) | 子智能体 | *大任务拆小, 每个小任务干净的上下文* |
-| [s05](./docs/zh/s05-skill-loading.md) | Skills | *用到什么知识, 临时加载什么知识* |
-| [s06](./docs/zh/s06-context-compact.md) | Context Compact | *上下文总会满, 要有办法腾地方* |
-| [s07](./docs/zh/s07-task-system.md) | 任务系统 | *大目标要拆成小任务, 排好序, 记在磁盘上* |
-| [s08](./docs/zh/s08-background-tasks.md) | 后台任务 | *慢操作丢后台, agent 继续想下一步* |
-| [s09](./docs/zh/s09-agent-teams.md) | 智能体团队 | *任务太大一个人干不完, 要能分给队友* |
-| [s10](./docs/zh/s10-team-protocols.md) | 团队协议 | *队友之间要有统一的沟通规矩* |
-| [s11](./docs/zh/s11-autonomous-agents.md) | 自治智能体 | *队友自己看看板, 有活就认领* |
-| [s12](./docs/zh/s12-worktree-task-isolation.md) | Worktree + 任务隔离 | *各干各的目录, 互不干扰* |
+| 课程                                            | 主题                | 格言                                     |
+| ----------------------------------------------- | ------------------- | ---------------------------------------- |
+| [s01](./docs/zh/s01-the-agent-loop.md)          | Agent 循环          | *One loop & Bash is all you need*        |
+| [s02](./docs/zh/s02-tool-use.md)                | Tool Use            | *加一个工具, 只加一个 handler*           |
+| [s03](./docs/zh/s03-todo-write.md)              | TodoWrite           | *没有计划的 agent 走哪算哪*              |
+| [s04](./docs/zh/s04-subagent.md)                | 子智能体            | *大任务拆小, 每个小任务干净的上下文*     |
+| [s05](./docs/zh/s05-skill-loading.md)           | Skills              | *用到什么知识, 临时加载什么知识*         |
+| [s06](./docs/zh/s06-context-compact.md)         | Context Compact     | *上下文总会满, 要有办法腾地方*           |
+| [s07](./docs/zh/s07-task-system.md)             | 任务系统            | *大目标要拆成小任务, 排好序, 记在磁盘上* |
+| [s08](./docs/zh/s08-background-tasks.md)        | 后台任务            | *慢操作丢后台, agent 继续想下一步*       |
+| [s09](./docs/zh/s09-agent-teams.md)             | 智能体团队          | *任务太大一个人干不完, 要能分给队友*     |
+| [s10](./docs/zh/s10-team-protocols.md)          | 团队协议            | *队友之间要有统一的沟通规矩*             |
+| [s11](./docs/zh/s11-autonomous-agents.md)       | 自治智能体          | *队友自己看看板, 有活就认领*             |
+| [s12](./docs/zh/s12-worktree-task-isolation.md) | Worktree + 任务隔离 | *各干各的目录, 互不干扰*                 |
 
 ## 学完之后 -- 从理解到落地
 
