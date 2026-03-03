@@ -1,7 +1,7 @@
 """
-v4_skills_agent.py - Mini Claude Code: Skills Mechanism (~550 lines)
+v5_skills_agent.py - Mini Claude Code: Skills Mechanism (~550 lines)
 
-v3 gave us subagents for task decomposition. But there's a deeper question:
+v4 gave us subagents for task decomposition. But there's a deeper question:
     How does the model know HOW to handle domain-specific tasks?
 
 - Processing PDFs? It needs to know pdftotext vs PyMuPDF
@@ -62,7 +62,7 @@ Skill content goes into tool_result (user message), NOT system prompt. This pres
 This is how production Claude Code works - and why it's cost-efficient.
 
 Usage:
-    python v4_skills_agent.py
+    python v5_skills_agent.py
 """
 
 import os
@@ -88,7 +88,7 @@ max_tokens = int(os.getenv("MAX_TOKENS"))
 
 
 # =============================================================================
-# SkillLoader - The core addition in v4
+# SkillLoader - The core addition in v5
 # =============================================================================
 class SkillLoader:
     """
@@ -236,7 +236,7 @@ SKILLS = SkillLoader(SKILLS_DIR)
 
 
 # =============================================================================
-# Agent Type Registry (from v3)
+# Agent Type Registry (from v4)
 # =============================================================================
 AGENT_TYPES = {
     "explore": {
@@ -319,7 +319,7 @@ todo = TodoManager()
 
 
 # =============================================================================
-# System Prompt - Updated for v4
+# System Prompt - Updated for v5
 # =============================================================================
 system = f"""You are a coding agent at {WORKDIR}.
 
@@ -421,7 +421,7 @@ BASE_TOOLS = [
     },
 ]
 
-# Task tool (from v3)
+# Task tool (from v4)
 TASK_TOOL = {
     "name": "Task",
     "description": f"""Spawn a subagent for a focused subtask.
@@ -447,7 +447,7 @@ Example uses:
     },
 }
 
-# NEW in v4: Skill tool
+# NEW in v5: Skill tool
 SKILL_TOOL = {
     "name": "Skill",
     "description": f"""Load a skill to gain specialized knowledge for a task.
@@ -594,9 +594,7 @@ Complete the task and return a clear, concise summary."""
     tool_count = 0
 
     while True:
-        response = client.messages.create(
-            model=model, system=sub_system, messages=sub_messages, tools=sub_tools, max_tokens=max_tokens
-        )
+        response = client.messages.create(model=model, system=sub_system, messages=sub_messages, tools=sub_tools, max_tokens=max_tokens)
 
         if response.stop_reason != "tool_use":
             break
@@ -651,13 +649,11 @@ def agent_loop(messages: list) -> list:
     """
     Main agent loop with skills support.
 
-    Same pattern as v3, but now with Skill tool.
+    Same pattern as v4, but now with Skill tool.
     When model loads a skill, it receives domain knowledge.
     """
     while True:
-        response = client.messages.create(
-            model=model, system=system, messages=messages, tools=ALL_TOOLS, max_tokens=max_tokens
-        )
+        response = client.messages.create(model=model, system=system, messages=messages, tools=ALL_TOOLS, max_tokens=max_tokens)
 
         tool_calls = []
         for block in response.content:
@@ -699,7 +695,7 @@ def agent_loop(messages: list) -> list:
 # Main REPL
 # =============================================================================
 def main():
-    print(f"Mini Claude Code v4 (with Skills) - {WORKDIR}")
+    print(f"Mini Claude Code v5 (with Skills) - {WORKDIR}")
     print(f"Skills: {', '.join(SKILLS.list_skills())}")
     print(f"Agent types: {', '.join(AGENT_TYPES.keys())}")
 

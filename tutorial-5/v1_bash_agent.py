@@ -1,5 +1,5 @@
 """
-v0_bash_agent.py - Mini Claude Code: Bash is All You Need (~50 lines core)
+v1_bash_agent.py - Mini Claude Code: Bash is All You Need (~50 lines core)
 
 This is the ULTIMATE simplification of a coding agent.
 After building v1-v3, we ask: what is the ESSENCE of an agent?
@@ -13,11 +13,11 @@ Bash 是进入这个世界的入口：
 
     | You need      | Bash command                           |
     |---------------|----------------------------------------|
-    | Read files    | cat, head, tail, grep                  |
+    | Read files    | cat, head, tail, grep
     | Write files   | echo '...' > file, cat << 'EOF' > file |
     | Search        | find, grep, rg, ls                     |
     | Execute       | python, npm, make, any command         |
-    | **Subagent**  | python v0_bash_agent.py "task"         |
+    | **Subagent**  | python v1_bash_agent.py "task"
 
 The last line is the KEY INSIGHT: calling itself via bash implements subagents!
 No Task tool, no Agent Registry - just recursion through process spawning.
@@ -26,7 +26,7 @@ No Task tool, no Agent Registry - just recursion through process spawning.
 
 How Subagents Work:
     Main Agent
-      |-- bash: python v0_bash_agent.py "analyze architecture"
+      |-- bash: python v1_bash_agent.py "analyze architecture"
            |-- Subagent (isolated process, fresh history)
                 |-- bash: find . -name "*.py"
                 |-- bash: cat src/main.py
@@ -44,10 +44,10 @@ Process isolation = Context isolation:
 
 Usage:
     # Interactive mode
-    python v0_bash_agent.py
+    python v1_bash_agent.py
 
     # Subagent mode (called by parent agent or directly)
-    python v0_bash_agent.py "explore src/ and summarize"
+    python v1_bash_agent.py "explore src/ and summarize"
 """
 
 from anthropic import Anthropic
@@ -71,7 +71,7 @@ tools = [
         "description": """Execute shell command. Common patterns:
 - Read: cat/head/tail, grep/find/rg/ls, wc -l
 - Write: echo 'content' > file, sed -i 's/old/new/g' file
-- Subagent: python v0_bash_agent.py 'task description' (spawns isolated agent, returns summary)""",
+- Subagent: python v1_bash_agent.py 'task description' (spawns isolated agent, returns summary)""",
         "input_schema": {"type": "object", "properties": {"command": {"type": "string"}}, "required": ["command"]},
     }
 ]
@@ -85,7 +85,7 @@ Rules:
 - Prefer tools over prose. Act first, explain briefly after.
 - Read files: cat, grep, find, rg, ls, head, tail
 - Write files: echo '...' > file, sed -i, or cat << 'EOF' > file
-- Subagent: For complex subtasks, spawn a subagent to keep context clean: python v0_bash_agent.py "explore src/ and summarize the architecture"
+- Subagent: For complex subtasks, spawn a subagent to keep context clean: python v1_bash_agent.py "explore src/ and summarize the architecture"
 
 When to use subagent:
 - Task requires reading many files (isolate the exploration)
@@ -119,9 +119,7 @@ def chat(prompt, history=None):
 
     while True:
         # 1. Call the model with tools
-        response = client.messages.create(
-            model=model, system=system, messages=history, tools=tools, max_tokens=max_tokens
-        )
+        response = client.messages.create(model=model, system=system, messages=history, tools=tools, max_tokens=max_tokens)
 
         # 2. Build assistant message content
         content = []

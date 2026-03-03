@@ -1,5 +1,5 @@
 """
-v1_basic_agent.py - Mini Claude Code: Model as Agent (~200 lines)
+v2_basic_agent.py - Mini Claude Code: Model as Agent (~200 lines)
 
 The secret of Claude Code, Cursor Agent, Codex CLI? There is no secret.
 
@@ -35,7 +35,7 @@ With just these 4 tools, the model can:
   - Run anything (bash: python, npm, make)
 
 Usage:
-    python v1_basic_agent.py
+    python v2_basic_agent.py
 """
 
 import os
@@ -276,9 +276,7 @@ def agent_loop(messages: list) -> list:
     """
     while True:
         # Step 1: Call the model
-        response = client.messages.create(
-            model=model, system=system, messages=messages, tools=tools, max_tokens=max_tokens
-        )
+        response = client.messages.create(model=model, system=system, messages=messages, tools=tools, max_tokens=max_tokens)
 
         # Step 2: Collect any tool calls and print text output
         tool_calls = []

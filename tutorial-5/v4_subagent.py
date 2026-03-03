@@ -1,8 +1,8 @@
 """
-v3_subagent.py - Mini Claude Code: Subagent Mechanism (~450 lines)
+v4_subagent.py - Mini Claude Code: Subagent Mechanism (~450 lines)
 
-v2 adds planning. But for large tasks like "explore the codebase then refactor auth", a single agent hits problems:
-v2 增加了规划能力。但面对“先探索代码库再重构 auth”这类大任务，单一 agent 会遇到新问题：
+v3 adds planning. But for large tasks like "explore the codebase then refactor auth", a single agent hits problems:
+v3 增加了规划能力。但面对“先探索代码库再重构 auth”这类大任务，单一 agent 会遇到新问题：
 
 The Problem - Context Pollution:
     Single-Agent History:
@@ -62,7 +62,7 @@ Typical Flow:
       4. Summarize changes to user
 
 Usage:
-    python v3_subagent.py
+    python v4_subagent.py
 """
 
 import os
@@ -119,7 +119,7 @@ def get_agent_descriptions() -> str:
 
 
 # =============================================================================
-# TodoManager (from v2, unchanged)
+# TodoManager (from v3, unchanged)
 # =============================================================================
 class TodoManager:
     def __init__(self):
@@ -276,7 +276,7 @@ BASE_TOOLS = [
 
 
 # =============================================================================
-# Task Tool - The core addition in v3
+# Task Tool - The core addition in v4
 # =============================================================================
 TASK_TOOL = {
     "name": "Task",
@@ -391,7 +391,7 @@ def run_todo(tasks: list) -> str:
 
 
 # =============================================================================
-# Subagent Execution - The heart of v3
+# Subagent Execution - The heart of v4
 # =============================================================================
 def run_task(description: str, prompt: str, agent_type: str) -> str:
     """
@@ -437,9 +437,7 @@ Complete the task and return a clear, concise summary."""
 
     # Run the same agent loop (silently - don't print to main chat)
     while True:
-        response = client.messages.create(
-            model=model, system=sub_system, messages=sub_messages, tools=sub_tools, max_tokens=max_tokens
-        )
+        response = client.messages.create(model=model, system=sub_system, messages=sub_messages, tools=sub_tools, max_tokens=max_tokens)
 
         if response.stop_reason != "tool_use":
             break
@@ -496,13 +494,11 @@ def agent_loop(messages: list) -> list:
     """
     Main agent loop with subagent support.
 
-    Same pattern as v1/v2, but now includes the Task tool.
+    Same pattern as v1/v3, but now includes the Task tool.
     When model calls Task, it spawns a subagent with isolated context.
     """
     while True:
-        response = client.messages.create(
-            model=model, system=system, messages=messages, tools=ALL_TOOLS, max_tokens=max_tokens
-        )
+        response = client.messages.create(model=model, system=system, messages=messages, tools=ALL_TOOLS, max_tokens=max_tokens)
 
         tool_calls = []
         for block in response.content:
@@ -540,7 +536,7 @@ def agent_loop(messages: list) -> list:
 # Main REPL
 # =============================================================================
 def main():
-    print(f"Mini Claude Code v3 (with Subagents) - {WORKDIR}")
+    print(f"Mini Claude Code v4 (with Subagents) - {WORKDIR}")
     print(f"Agent types: {', '.join(AGENT_TYPES.keys())}")
 
     history = []

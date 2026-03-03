@@ -1,26 +1,26 @@
 """
-v2_todo_agent.py - Mini Claude Code: Structured Planning (~300 lines)
+v3_todo_agent.py - Mini Claude Code: Structured Planning (~300 lines)
 
-v1 works great for simple tasks. But ask it to "refactor auth, add tests, update docs" and watch what happens.
+v2 works great for simple tasks. But ask it to "refactor auth, add tests, update docs" and watch what happens.
 Without explicit planning, the model:
   - Jumps between tasks randomly
   - Forgets completed steps
   - Loses focus mid-way
-v1 对简单任务很有效。但如果你让它“重构认证、加测试、更新文档”，你会看到，没有显式规划时的模型容易：
+v2 对简单任务很有效。但如果你让它“重构认证、加测试、更新文档”，你会看到，没有显式规划时的模型容易：
   - 在任务之间随机跳转
   - 忘记已完成的步骤
   - 做到一半失去焦点
 
 The Problem - "Context Fade":
 ----------------------------
-In v1, plans exist only in the model's "head":
-    v1: "I'll do A, then B, then C"  (invisible)
+In v2, plans exist only in the model's "head":
+    v2: "I'll do A, then B, then C"  (invisible)
         After 10 tool calls: "Wait, what was I doing?"
 
 The Solution - TodoWrite Tool:
 -----------------------------
-v2 adds ONE new tool that fundamentally changes how the agent works:
-    v2:
+v3 adds ONE new tool that fundamentally changes how the agent works:
+    v3:
       [ ] Refactor auth module
       [>] Add unit tests         <- Currently working on this
       [ ] Update documentation
@@ -59,7 +59,7 @@ Good constraints aren't limitations. They're scaffolding.
 好的约束不是限制，而是脚手架。
 
 Usage:
-    python v2_todo_agent.py
+    python v3_todo_agent.py
 """
 
 import os
@@ -80,7 +80,7 @@ max_tokens = int(os.getenv("MAX_TOKENS"))
 
 
 # =============================================================================
-# TodoManager - The core addition in v2
+# TodoManager - The core addition in v3
 # =============================================================================
 class TodoManager:
     """
@@ -196,7 +196,7 @@ class TodoManager:
 todo = TodoManager()
 
 # =============================================================================
-# System Prompt - Updated for v2
+# System Prompt - Updated for v3
 # =============================================================================
 system = f"""You are a coding agent at {WORKDIR}.
 Loop: plan -> act with tools -> update todos -> report.
@@ -217,10 +217,10 @@ initial_reminder = "<reminder>Use TodoWrite for multi-step tasks.</reminder>"
 nag_reminder = "<reminder>10+ turns without todo update. Please update todos.</reminder>"
 
 # =============================================================================
-# Tool Definitions (v1 tools + TodoWrite)
+# Tool Definitions (v2 tools + TodoWrite)
 # =============================================================================
 tools = [
-    # v1 tools (unchanged)
+    # v2 tools (unchanged)
     {
         "name": "bash",
         "description": "Run a shell command. Use for: ls, find, grep, git, npm, python, etc.",
@@ -267,7 +267,7 @@ tools = [
             "required": ["path", "old_text", "new_text"],
         },
     },
-    # NEW in v2: TodoWrite
+    # NEW in v3: TodoWrite
     # This is the key addition that enables structured planning
     {
         "name": "TodoWrite",
@@ -303,7 +303,7 @@ tools = [
 
 
 # =============================================================================
-# Tool Implementations (v1 + TodoWrite)
+# Tool Implementations (v2 + TodoWrite)
 # =============================================================================
 def safe_path(p: str) -> Path:
     path = (WORKDIR / p).resolve()
@@ -403,17 +403,15 @@ def agent_loop(messages: list) -> list:
     """
     Agent loop with todo usage tracking.
 
-    Same core loop as v1, but now we track whether the model is using todos.
+    Same core loop as v2, but now we track whether the model is using todos.
     If it goes too long without updating, we inject a reminder into the next user message (tool results).
-    核心循环与 v1 相同，但这里会追踪模型是否在使用 todo。
+    核心循环与 v2 相同，但这里会追踪模型是否在使用 todo。
     如果太久没更新，就把提醒注入到下一条 user message（tool results）里。
     """
     global rounds_without_todo
 
     while True:
-        response = client.messages.create(
-            model=model, system=system, messages=messages, tools=tools, max_tokens=max_tokens
-        )
+        response = client.messages.create(model=model, system=system, messages=messages, tools=tools, max_tokens=max_tokens)
 
         tool_calls = []
         for block in response.content:
@@ -471,12 +469,12 @@ def main():
     """
     REPL with reminder injection.
 
-    Key v2 addition: We inject "reminder" messages to encourage todo usage without forcing it. This is a soft constraint.
-    v2 的关键增量：注入 reminder 文本来鼓励使用 todo，但不强制，这是“软约束”。
+    Key v3 addition: We inject "reminder" messages to encourage todo usage without forcing it. This is a soft constraint.
+    v3 的关键增量：注入 reminder 文本来鼓励使用 todo，但不强制，这是“软约束”。
     """
     global rounds_without_todo
 
-    print(f"Mini Claude Code v2 (with Todos) - {WORKDIR}")
+    print(f"Mini Claude Code v3 (with Todos) - {WORKDIR}")
 
     history = []
     first_message = True

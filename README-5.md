@@ -21,28 +21,28 @@
 从这里开始
     |
     v
-[v0: Bash Agent] -----> "一个工具就够了"
+[v1: Bash Agent] -----> "一个工具就够了"
     |                    16-50 行
     v
-[v1: Basic Agent] ----> "完整的 Agent 模式"
+[v2: Basic Agent] ----> "完整的 Agent 模式"
     |                    4 个工具，~200 行
     v
-[v2: Todo Agent] -----> "让计划显式化"
+[v3: Todo Agent] -----> "让计划显式化"
     |                    +TodoManager，~300 行
     v
-[v3: Subagent] -------> "分而治之"
+[v4: Subagent] -------> "分而治之"
     |                    +Task 工具，~450 行
     v
-[v4: Skills Agent] ---> "按需领域专业"
+[v5: Skills Agent] ---> "按需领域专业"
                          +Skill 工具，~550 行
 ```
 
 **推荐学习方式：**
-1. 先阅读并运行 v0 - 理解核心循环
-2. 对比 v0 和 v1 - 看工具如何演进
-3. 学习 v2 的规划模式
-4. 探索 v3 的复杂任务分解
-5. 掌握 v4 构建可扩展的 Agent
+1. 先阅读并运行 v1 - 理解核心循环
+2. 对比 v1 和 v2 - 看工具如何演进
+3. 学习 v3 的规划模式
+4. 探索 v4 的复杂任务分解
+5. 掌握 v5 构建可扩展的 Agent
 
 ## 核心模式
 
@@ -63,21 +63,21 @@ while True:
 
 | 版本                       | 行数 | 工具                    | 核心新增   | 关键洞察              |
 | -------------------------- | ---- | ----------------------- | ---------- | --------------------- |
-| [v0](./v0_bash_agent.py)   | ~50  | bash                    | 递归子代理 | 一个工具就够了        |
-| [v1](./v1_basic_agent.py)  | ~200 | bash, read, write, edit | 核心循环   | 模型即代理            |
-| [v2](./v2_todo_agent.py)   | ~300 | +TodoWrite              | 显式规划   | 约束赋能复杂性        |
-| [v3](./v3_subagent.py)     | ~450 | +Task                   | 上下文隔离 | 干净上下文 = 更好结果 |
-| [v4](./v4_skills_agent.py) | ~550 | +Skill                  | 知识加载   | 专业无需重训          |
+| [v1](./v1_bash_agent.py)   | ~50  | bash                    | 递归子代理 | 一个工具就够了        |
+| [v2](./v2_basic_agent.py)  | ~200 | bash, read, write, edit | 核心循环   | 模型即代理            |
+| [v3](./v3_todo_agent.py)   | ~300 | +TodoWrite              | 显式规划   | 约束赋能复杂性        |
+| [v4](./v4_subagent.py)     | ~450 | +Task                   | 上下文隔离 | 干净上下文 = 更好结果 |
+| [v5](./v5_skills_agent.py) | ~550 | +Skill                  | 知识加载   | 专业无需重训          |
 
 ## 文件结构
 
 ```
 learn-claude-code/
-├── v0_bash_agent.py       # ~50 行: 1 个工具，递归子代理
-├── v1_basic_agent.py      # ~200 行: 4 个工具，核心循环
-├── v2_todo_agent.py       # ~300 行: + TodoManager
-├── v3_subagent.py         # ~450 行: + Task 工具，代理注册表
-├── v4_skills_agent.py     # ~550 行: + Skill 工具，SkillLoader
+├── v1_bash_agent.py       # ~50 行: 1 个工具，递归子代理
+├── v2_basic_agent.py      # ~200 行: 4 个工具，核心循环
+├── v3_todo_agent.py       # ~300 行: + TodoManager
+├── v4_subagent.py         # ~450 行: + Task 工具，代理注册表
+├── v5_skills_agent.py     # ~550 行: + Skill 工具，SkillLoader
 ├── skills/                # 示例 Skills（pdf, code-review, mcp-builder, agent-builder）
 └── docs/                  # 技术文档
 ```
