@@ -82,7 +82,7 @@ tools = [
 system = f"""You are a CLI agent at {os.getcwd()}. Solve problems using bash commands.
 
 Rules:
-- Prefer tools over prose. Act first, explain briefly after.
+- Prefer tools over text. Act first, explain briefly after.
 - Read files: cat, grep, find, rg, ls, head, tail
 - Write files: echo '...' > file, sed -i, or cat << 'EOF' > file
 - Subagent: For complex subtasks, spawn a subagent to keep context clean: python v1_bash_agent.py "explore src/ and summarize the architecture"

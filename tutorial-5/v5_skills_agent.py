@@ -475,7 +475,7 @@ def get_tools_for_agent(agent_type: str) -> list:
     allowed = AGENT_TYPES.get(agent_type, {}).get("tools", "*")
     if allowed == "*":
         return BASE_TOOLS
-    return [tool for tool in BASE_TOOLS if tool["name"] in allowed]
+    return [tool for tool in ALL_TOOLS if tool["name"] in allowed]
 
 
 # =============================================================================

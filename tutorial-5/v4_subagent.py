@@ -30,7 +30,7 @@ Each subagent has:
 The Key Insight:
 ---------------
     Process isolation = Context isolation
-    进程隔离= 上下文隔离
+    进程隔离 = 上下文隔离
 
 By spawning subtasks, we get:
   - Clean context for the main agent
@@ -319,7 +319,7 @@ def get_tools_for_agent(agent_type: str) -> list:
     allowed = AGENT_TYPES.get(agent_type, {}).get("tools", "*")
     if allowed == "*":
         return BASE_TOOLS
-    return [tool for tool in BASE_TOOLS if tool["name"] in allowed]
+    return [tool for tool in ALL_TOOLS if tool["name"] in allowed]
 
 
 # =============================================================================
