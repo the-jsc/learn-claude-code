@@ -175,9 +175,11 @@ class TodoManager:
         """
         大模型每次都会生成完整任务列表，我们对此进行检验并美化输出。
         """
+        if len(todos) > 10:
+            raise ValueError("Max 10 todos allowed")
+
         validated = []
         in_progress_count = 0
-
         for i, todo in enumerate(todos):
             # 任务名称、状态、内容、结果
             name = str(todo.get("name", "")).strip()
@@ -292,7 +294,7 @@ BASE_TOOLS = [
             "properties": {
                 "todos": {
                     "type": "array",
-                    "description": "Complete list of todos (replaces existing)",
+                    "description": "Complete list of todos (replaces existing). Max 10 todos allowed.",
                     "items": {
                         "type": "object",
                         "properties": {
