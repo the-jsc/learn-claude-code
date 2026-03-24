@@ -1,22 +1,22 @@
-# v0: Bash 就是一切
+# v1: Bash 就是一切
 
 **终极简化：~50 行代码，1 个工具，完整的 Agent 能力。**
 
 在构建 v1、v2、v3 之后，一个问题浮现：Agent 的*本质*到底是什么？
 
-v0 通过反向思考来回答——剥离一切，直到只剩下核心。
+v1 通过反向思考来回答——剥离一切，直到只剩下核心。
 
 ## 核心洞察
 
 Unix 哲学：一切皆文件，一切皆可管道。Bash 是这个世界的入口：
 
-| 你需要 | Bash 命令 |
-|--------|-----------|
-| 读文件 | `cat`, `head`, `grep` |
-| 写文件 | `echo '...' > file` |
-| 搜索 | `find`, `grep`, `rg` |
-| 执行 | `python`, `npm`, `make` |
-| **子代理** | `python v0_bash_agent.py "task"` |
+| 你需要     | Bash 命令                        |
+| ---------- | -------------------------------- |
+| 读文件     | `cat`, `head`, `grep`            |
+| 写文件     | `echo '...' > file`              |
+| 搜索       | `find`, `grep`, `rg`             |
+| 执行       | `python`, `npm`, `make`          |
+| **子代理** | `python v1_bash_agent.py "task"` |
 
 最后一行是关键洞察：**通过 bash 调用自身就实现了子代理**。不需要 Task 工具，不需要 Agent Registry——只需要递归。
 
@@ -33,7 +33,7 @@ TOOL = [{
     "description": """执行 shell 命令。模式：
 - 读取: cat/grep/find/ls
 - 写入: echo '...' > file
-- 子代理: python v0_bash_agent.py 'task description'""",
+- 子代理: python v1_bash_agent.py 'task description'""",
     "input_schema": {"type": "object", "properties": {"command": {"type": "string"}}, "required": ["command"]}
 }]
 SYSTEM = f"CLI agent at {os.getcwd()}. Use bash. Spawn subagent for complex tasks."
@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
 ```
 主代理
-  └─ bash: python v0_bash_agent.py "分析架构"
+  └─ bash: python v1_bash_agent.py "分析架构"
        └─ 子代理（独立进程，全新历史）
             ├─ bash: find . -name "*.py"
             ├─ bash: cat src/main.py
@@ -79,16 +79,16 @@ if __name__ == "__main__":
 - 父进程捕获 stdout 作为工具结果
 - 递归调用实现无限嵌套
 
-## v0 牺牲了什么
+## v1 牺牲了什么
 
-| 特性 | v0 | v3 |
-|------|----|----|
-| 代理类型 | 无 | explore/code/plan |
-| 工具过滤 | 无 | 白名单 |
-| 进度显示 | 普通 stdout | 行内更新 |
-| 代码复杂度 | ~50 行 | ~450 行 |
+| 特性       | v1          | v4                |
+| ---------- | ----------- | ----------------- |
+| 代理类型   | 无          | explore/code/plan |
+| 工具过滤   | 无          | 白名单            |
+| 进度显示   | 普通 stdout | 行内更新          |
+| 代码复杂度 | ~50 行      | ~450 行           |
 
-## v0 证明了什么
+## v1 证明了什么
 
 **复杂能力从简单规则中涌现：**
 
@@ -113,5 +113,3 @@ while True:
 ---
 
 **Bash 就是一切。**
-
-[← 返回 README](../README_zh.md)

@@ -478,7 +478,9 @@ Complete the task and return a clear, concise summary."""
 
     # Run the same agent loop
     while True:
-        response = CLIENT.messages.create(model=MODEL, system=sub_system, messages=sub_messages, tools=sub_tools, max_tokens=MAX_TOKENS)
+        response = CLIENT.messages.create(
+            model=MODEL, system=sub_system, messages=sub_messages, tools=sub_tools, max_tokens=MAX_TOKENS
+        )
         sub_messages.append({"role": "assistant", "content": response.content})
         tool_calls = [block for block in response.content if block.type == "tool_use"]
 
@@ -533,14 +535,16 @@ def execute_tool(name: str, args: dict) -> str:
 # =============================================================================
 def agent_loop(messages: list) -> list:
     while True:
-        response = CLIENT.messages.create(model=MODEL, system=SYSTEM, messages=messages, tools=TOOLS, max_tokens=MAX_TOKENS)
+        response = CLIENT.messages.create(
+            model=MODEL, system=SYSTEM, messages=messages, tools=TOOLS, max_tokens=MAX_TOKENS
+        )
         messages.append({"role": "assistant", "content": response.content})
 
         # 打印输出、收集工具调用
         tool_calls = []
         for block in response.content:
             if block.type == "text":
-                print(block.text)
+                print(f"\n🤖 {block.text}\n")
             elif block.type == "tool_use":
                 tool_calls.append(block)
 
@@ -551,9 +555,11 @@ def agent_loop(messages: list) -> list:
         else:
             results = []
             for tool_call in tool_calls:
-                print(f"\n🛠️ {tool_call.name}: {tool_call.input}")
+                print("=" * 100)
+                print(f"🛠️ {tool_call.name}: {tool_call.input}\n")
                 result = execute_tool(tool_call.name, tool_call.input)
-                print(f"\n💡 {result}")
+                print(f"💡 {result}")
+                print("=" * 100)
                 results.append({"type": "tool_result", "tool_use_id": tool_call.id, "content": result})
             messages.append({"role": "user", "content": results})
 
